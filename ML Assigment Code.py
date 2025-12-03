@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import roc_auc_score, confusion_matrix
+import matplotlib.pyplot as plt
 from google.colab import files
 uploaded = files.upload()
 
@@ -48,7 +50,42 @@ print("Test size:", X_test.shape)
 # Define models
 models = {"GradientBoosting": GradientBoostingClassifier(random_state=42),"NaiveBayes": GaussianNB(),"NeuralNetwork": MLPClassifier(hidden_layer_sizes=(64, 32),activation='relu', max_iter=500, random_state=42)}
 print("Models defined:", list(models.keys()))
-
+for name, model in models.items():
+    # Train model
+    model.fit(X_train, y_train)
+    
+    # Predict on validation set
+    y_pred_val = model.predict(X_val)
+    y_prob_val = model.predict_proba(X_val)[:, 1] if hasattr(model, "predict_proba") else None
+    
+    # Validation AUC
+    auc_val = roc_auc_score(y_val, y_prob_val) if y_prob_val is not None else None
+    print(f"{name} Validation AUC:", round(auc_val, 4) if auc_val is not None else "N/A")
+    
+    # Confusion matrix
+    cm = confusion_matrix(y_val, y_pred_val)
+    plt.figure(figsize=(6,5))
+    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title(f'Confusion Matrix - {name}')
+    plt.colorbar()
+    plt.ylabel('Actual')
+    plt.xlabel('Predicted')
+    plt.xticks([0,1], ['No','Yes'])
+    plt.yticks([0,1], ['No','Yes'])
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            plt.text(j, i, str(cm[i,j]), ha='center', va='center', color='red', fontsize=14)
+    plt.tight_layout()
+    plt.show()
+    
+    # Feature importance for Gradient Boosting
+    if name == "GradientBoosting":
+        feat_imp = pd.Series(model.feature_importances_, index=X_scaled.columns)
+        feat_imp = feat_imp.sort_values(ascending=False).head(10)
+        feat_imp[::-1].plot(kind='barh', title=f'Top 10 Features - {name}')
+        plt.xlabel('Importance')
+        plt.tight_layout()
+        plt.show()
 
 
 
