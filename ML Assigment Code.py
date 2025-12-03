@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+from sklearn.preprocessing import MinMaxScaler
 from google.colab import files
 uploaded = files.upload()
 
@@ -21,6 +21,24 @@ y = data['new_contract_this_campaign']
 X = data.drop(columns=['new_contract_this_campaign'])
 
 print("Target distribution:\n", y.value_counts())
+X = pd.get_dummies(X, drop_first=False)
+
+# fill missing values
+X = X.fillna(X.mean())
+
+# Scale features
+scaler = MinMaxScaler()
+X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+
+print("Sample of scaled features:\n", X_scaled.head())
+
+
+
+
+
+
+
+
 
 
 
