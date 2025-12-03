@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neural_network import MLPClassifier
 from google.colab import files
 uploaded = files.upload()
 
@@ -41,6 +44,11 @@ X_train, X_val, y_train, y_val = train_test_split (X_temp, y_temp, test_size=0.2
 print("Train size:", X_train.shape)
 print("Validation size:", X_val.shape)
 print("Test size:", X_test.shape)
+
+# Define models
+models = {"GradientBoosting": GradientBoostingClassifier(random_state=42),"NaiveBayes": GaussianNB(),"NeuralNetwork": MLPClassifier(hidden_layer_sizes=(64, 32),activation='relu', max_iter=500, random_state=42)}
+print("Models defined:", list(models.keys()))
+
 
 
 
