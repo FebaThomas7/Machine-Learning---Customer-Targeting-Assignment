@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
 from google.colab import files
 uploaded = files.upload()
 
@@ -29,8 +30,20 @@ X = X.fillna(X.mean())
 # Scale features
 scaler = MinMaxScaler()
 X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
-
 print("Sample of scaled features:\n", X_scaled.head())
+
+# Split temp/test
+X_temp, X_test, y_temp, y_test = train_test_split (X_scaled, y, test_size=0.20, random_state=42, stratify=y)
+
+# Split train/val
+X_train, X_val, y_train, y_val = train_test_split (X_temp, y_temp, test_size=0.25, random_state=42, stratify=y_temp)
+
+print("Train size:", X_train.shape)
+print("Validation size:", X_val.shape)
+print("Test size:", X_test.shape)
+
+
+
 
 
 
