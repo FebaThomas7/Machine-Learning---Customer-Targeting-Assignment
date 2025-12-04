@@ -7,6 +7,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import roc_auc_score, confusion_matrix
 from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
 from google.colab import files
 uploaded = files.upload()
@@ -14,9 +15,9 @@ uploaded = files.upload()
 # Load CSV
 data = pd.read_csv("wallacecommunications.csv")
 
-# Drop 'customer_id' if it exists
-if 'customer_id' in data.columns:
-    data = data.drop(columns=['customer_id'])
+# Drop 'ID' if it exists
+if 'ID' in data.columns:
+    data = data.drop(columns=['ID'])
 
 print(data.head())
 print("Columns:", data.columns)
@@ -126,7 +127,53 @@ for i in range(cm.shape[0]):
 plt.tight_layout()
 plt.show()
 
+# Initialize a list to store results
+results = []
+for name, model in models.items():
+    
+    # Predict on test set
+    y_pred = model.predict(X_test)
+    
+    # Compute metrics
+    acc = accuracy_score(y_test, y_pred)
+    prec = precision_score(y_test, y_pred)
+    rec = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    
+    # Append to results
+    results.append({
+        "Model": name,
+        "Accuracy": round(acc, 4),
+        "Precision": round(prec, 4),
+        "Recall": round(rec, 4),
+        "F1-Score": round(f1, 4)})
+
+# Create a DataFrame from the model evaluation results and display it
+results_df = pd.DataFrame(results)
+print("\nModel Performance Table:")
+print(results_df)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
+
 
 
 
